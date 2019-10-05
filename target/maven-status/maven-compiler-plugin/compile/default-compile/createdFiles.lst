@@ -1,0 +1,15 @@
+DataObject/Corpus.class
+DeltaEncoder.class
+VbyteCompressor.class
+Test.class
+JsonUtil/JsonParser$1.class
+QueryEngine$DocumentScore.class
+JsonUtil/LookupItemSerializer.class
+DataObject/LookupItem.class
+DefaultCompressor.class
+QueryEngine.class
+JsonUtil/JsonParser.class
+DataObject/Scene.class
+DataObject/Posting.class
+Indexer.class
+Compressor.class
