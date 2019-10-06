@@ -1,7 +1,7 @@
 # Information_Retrival
 
 ### Maven
-This project uses Maven to handle dependency management and build. If you don't have Maven already on your system. Download it here "https://maven.apache.org/download.cgi". Once you downloaded it unzip it, you can just add its bin folder to your PATH variable.
+This project uses Maven to handle dependency management and build. If you don't have Maven already on your system. Download it here "https://maven.apache.org/download.cgi". Once you downloadeit and unzip it, you can just add its bin folder to your PATH variable.
 
 ### Dependencies
 
@@ -9,9 +9,21 @@ The project uses Jackson, its depencies is included in Maven build files. As lon
 
 ### Build
 There are two runnable main classes (Indexer and QueryEngine) and each one has its own pom.xml. 
-To build Indexer, run mvn -f pom.xml  compile assembly:single
-To build QueryEngine, run mvn -f pomquery.xml  compile assembly:single
+To build Indexer, 
+```
+mvn -f pom.xml  compile assembly:single
+```
+To build QueryEngine,
+```
+mvn -f pomquery.xml  compile assembly:single
+```
 
 ### Run
-To run Indexer, java -cp target/Indexer-1.0-SNAPSHOT-jar-with-dependencies.jar Indexer
-To run QueryEngine, java -cp target/QueryEngine-1.0-SNAPSHOT-jar-with-dependencies.jar QueryEngine true 14term.txt 5
+To run Indexer, 
+```
+java -cp target/Indexer-1.0-SNAPSHOT-jar-with-dependencies.jar Indexer
+```
+To run QueryEngine, 
+```
+java -cp target/QueryEngine-1.0-SNAPSHOT-jar-with-dependencies.jar QueryEngine true 14term.txt 5
+```
