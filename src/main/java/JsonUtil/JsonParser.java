@@ -31,7 +31,6 @@ public class JsonParser {
             e.printStackTrace();
         }
 
-
         return corpus;
     }
 

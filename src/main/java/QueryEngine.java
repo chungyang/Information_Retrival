@@ -27,19 +27,40 @@ public class QueryEngine {
 
         List<Integer> result = new LinkedList<>();
 
+
         try(RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "rw")){
 
-            Map<Integer, Integer> documentScores = new HashMap<>();
             Compressor compressor = isCompress? new VbyteCompressor() : new DefaultCompressor();
+            Map<String, List<Posting>> queryPostings = new HashMap<>();
 
             for(String queryTerm : queryTerms){
 
                 List<Posting> postings = compressor.decompress(lookupTable.get(queryTerm), randomAccessFile);
 
-                for(Posting posting : postings){
-                    int documentScore = documentScores.getOrDefault(posting.getDocumentId(), 0);
-                    documentScore++;
-                    documentScores.put(posting.getDocumentId(), documentScore);
+                queryPostings.put(queryTerm, postings);
+
+            }
+
+            Map<Integer, Integer> documentScores = new HashMap<>();
+
+            //The posting implementation is backed by an ArrayList. Removing element from
+            //the end of list is less expensive because elements won't need to be shifted
+            for(int i = 748; i > 0; i--){
+
+                for(Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()){
+
+                    List<Posting> postings = entry.getValue();
+                    if(postings.isEmpty()){
+                        continue;
+                    }
+                    Posting lastPosting = postings.get(postings.size() - 1);
+
+                    if(lastPosting.getDocumentId() == i){
+                        int score = documentScores.getOrDefault(i, 0);
+                        score++;
+                        documentScores.put(i, score);
+                        postings.remove(postings.size() - 1);
+                    }
                 }
             }
 
@@ -250,14 +271,15 @@ public class QueryEngine {
     }
     public static void main(String[] args) throws FileNotFoundException {
 
-        String binaryFilename = Boolean.valueOf(args[0])? "compress_binary.dat" : "compress.dat";
-        List<List<String>> termSets = getTermSets(args[2]);
-        int topKresult = args.length > 2?Integer.valueOf(args[1]):1;
+        String binaryFilename = Boolean.valueOf(args[0])? "compress_binary.dat" : "binary.dat";
+        List<List<String>> termSets = getTermSets(args[1]);
+        int topKresult = args.length > 2?Integer.valueOf(args[2]):1;
 
         for(List<String> set : termSets){
             List<Integer> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set);
             printResult(docs);
         }
+
 
     }
 }
