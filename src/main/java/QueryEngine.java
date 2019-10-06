@@ -57,7 +57,7 @@ public class QueryEngine {
 
                     if(lastPosting.getDocumentId() == i){
                         int score = documentScores.getOrDefault(i, 0);
-                        score++;
+                        score += lastPosting.getPositions().size();
                         documentScores.put(i, score);
                         postings.remove(postings.size() - 1);
                     }
@@ -107,15 +107,12 @@ public class QueryEngine {
 
         Compressor compressor = isCompress? new VbyteCompressor() : new DefaultCompressor();
 
-        int count = 0;
         RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "rw");
 
         for(List<String> set : termSets){
 
             int size = set.size();
             for(int i = 0; i < size; i++) {
-                System.out.println(count);
-                count++;
 
                 String queryTerm = set.get(i);
                 String correspondingTerm = null;
