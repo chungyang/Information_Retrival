@@ -1,17 +1,17 @@
+package Utilities;
+
 import DataObject.LookupItem;
 import DataObject.Posting;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
 
- DefaultCompressor performs no compression or decompression algorithm.
+ Utilities.DefaultCompressor performs no compression or decompression algorithm.
  It simply reads and writes raw bytes.
 
  **/

@@ -1,8 +1,9 @@
+package Utilities;
+
 import DataObject.LookupItem;
 import DataObject.Posting;
 
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public interface Compressor {

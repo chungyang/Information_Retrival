@@ -1,3 +1,5 @@
+package Utilities;
+
 import DataObject.Posting;
 
 import java.util.ArrayList;

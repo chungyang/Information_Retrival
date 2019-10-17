@@ -1,3 +1,7 @@
+import Utilities.Compressor;
+import Utilities.DefaultCompressor;
+import Utilities.DeltaEncoder;
+import Utilities.VbyteCompressor;
 import DataObject.Corpus;
 import DataObject.LookupItem;
 import DataObject.Posting;
