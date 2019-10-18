@@ -10,8 +10,12 @@ import java.util.Set;
 
 public interface DocumentScorer {
 
-    public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings, DocumentInfo documentInfo);
+    public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings,
+                               Map<String, Integer> queryFrequencies,
+                               DocumentInfo documentInfo, int numebrOfDoc, float averageDocLength);
 
-    public Map<Integer, Float> scoreDocuments(Set<Integer> documentIDs, Map<String, List<Posting>> queryPostings, DocumentInfo documentInfo);
+    public Map<Integer, Float> scoreDocuments(Set<Integer> documentIDs, Map<String, List<Posting>> queryPostings,
+                                              Map<String, Integer> queryFrequencies,
+                                              Map<String, DocumentInfo> documentInfo, float averageDocLength);
 
 }

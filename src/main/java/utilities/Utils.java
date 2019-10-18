@@ -1,6 +1,10 @@
 package utilities;
 
+import dataobject.Corpus;
+import dataobject.DocumentInfo;
 import dataobject.LookupItem;
+import dataobject.Scene;
+import queryengine.DocumentScore;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,6 +15,36 @@ import java.util.Random;
 
 
 public class Utils {
+
+    /**
+     * This method writes the document ranking into TREC format. It writes entries according to
+     * the list of documentScore provided so it is assumed the list is already sorted with the highest
+     * score first.
+     *
+     * @param trecFilename file name for the file to write to
+     * @param documentScores
+     * @param documentInfoMap
+     * @param entryPrefix prefix for the sixth column in TREC
+     * @param fileparams file name parameters
+     */
+    public static void writeTREC(String trecFilename, List<DocumentScore> documentScores,
+                                 Map<String, DocumentInfo> documentInfoMap, String entryPrefix,
+                                 String... fileparams){
+
+
+
+    }
+
+    public static float getAverageDocLength(Corpus corpus){
+        int numberOfDocument = corpus.getCorpus().size();
+        float lengthSum = 0;
+
+        for(Scene scene : corpus.getCorpus()){
+            lengthSum += scene.getText().split("\\s+").length;
+        }
+
+        return lengthSum / numberOfDocument;
+    }
 
     public static void randomSelect(int numberOfTerms, int numberOfSets, String outputFileName,
                                     List<String> allTerms, Map<String, LookupItem> lookupTable){

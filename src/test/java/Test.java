@@ -34,13 +34,13 @@ public class Test {
 //            }
 //        }
 //        System.out.println(true);
-//        List<List<String>> termSets = QueryEngine.getTermSets("14term.txt");
+//        List<List<String>> termSets = queryengine.QueryEngine.getTermSets("14term.txt");
 //
         long start = System.currentTimeMillis();
 //
 //        for(int i = 0; i < 100; i++) {
 //            for (List<String> set : termSets) {
-//                List<Integer> docs = QueryEngine.documentQuery("binary.dat", false, 5, set);
+//                List<Integer> docs = queryengine.QueryEngine.documentQuery("binary.dat", false, 5, set);
 //            }
 //        }
 //
@@ -52,8 +52,8 @@ public class Test {
 //
 //        for(int i = 0; i < 100; i++) {
 //            for (List<String> set : termSets) {
-//                List<Integer> docs = QueryEngine.documentQuery("compress_binary.dat", true, 5, set);
-//                QueryEngine.printResult(docs);
+//                List<Integer> docs = queryengine.QueryEngine.documentQuery("compress_binary.dat", true, 5, set);
+//                queryengine.QueryEngine.printResult(docs);
 //            }
 //        }
 //

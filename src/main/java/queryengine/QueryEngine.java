@@ -1,7 +1,12 @@
+package queryengine;
+
 import dataobject.Corpus;
 import dataobject.DocumentInfo;
+import retrievalmodel.DocumentScorer;
+import retrievalmodel.DocumentScorerFactory;
 import utilities.Compressor;
 import utilities.DefaultCompressor;
+import utilities.Utils;
 import utilities.VbyteCompressor;
 import dataobject.LookupItem;
 import dataobject.Posting;
@@ -16,6 +21,7 @@ public class QueryEngine {
     private static Map<String, DocumentInfo> documentInfoMap;
     private static List<String> terms;
     private static int numberOfDocument;
+    private static float averageDocLength;
 
     static{
         JsonParser jsonParser = new JsonParser();
@@ -24,24 +30,26 @@ public class QueryEngine {
         terms = new ArrayList<>(lookupTable.keySet());
         Corpus corpus = jsonParser.parseJson2Corpus("shakespeare-scenes.json");
         numberOfDocument = corpus.getCorpus().size();
+        averageDocLength = Utils.getAverageDocLength(corpus);
     }
 
-    public static List<Integer> documentQuery(String fileName, boolean isCompress, int topKdoc, List<String> queryTerms){
+    public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,
+                                              List<String> queryTerms, String scorerType){
         String[] queryTermsArray = new String[queryTerms.size()];
         queryTermsArray = queryTerms.toArray(queryTermsArray);
 
-        return documentQuery(fileName, isCompress, topKdoc, queryTermsArray);
+        return documentQuery(fileName, isCompress, topKdoc, queryTermsArray, scorerType);
     }
 
-    public static List<Integer> documentQuery(String fileName, boolean isCompress, int topKdoc, String... queryTerms){
+    public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,  String[] queryTerms, String scorerType){
 
-        List<Integer> result = new LinkedList<>();
-
+        List<DocumentScore> topKDocumentScores = new LinkedList<>();
 
         try(RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "rw")){
 
             Compressor compressor = isCompress? new VbyteCompressor() : new DefaultCompressor();
             Map<String, List<Posting>> queryPostings = new HashMap<>();
+            Map<String, Integer> queryFrequencies = new HashMap<>();
 
             for(String queryTerm : queryTerms){
 
@@ -49,47 +57,46 @@ public class QueryEngine {
 
                 queryPostings.put(queryTerm, postings);
 
+                int queryFrequency = queryFrequencies.getOrDefault(queryTerm, 0);
+                queryFrequency++;
+                queryFrequencies.put(queryTerm, queryFrequency);
             }
 
-            Map<Integer, Integer> documentScores = new HashMap<>();
+            Map<Integer, Float> documentScores = new HashMap<>();
+            DocumentScorer documentScorer = DocumentScorerFactory.getDocumentScorer(scorerType);
 
             //The posting implementation is backed by an ArrayList. Removing element from
             //the end of list is less expensive because elements won't need to be shifted
             for(int i = numberOfDocument; i > 0; i--){
 
-                for(Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()){
+                float documentScore = documentScorer.scoreDocument(i, queryPostings,
+                        queryFrequencies, documentInfoMap.get(String.valueOf(i)), numberOfDocument, averageDocLength);
 
-                    List<Posting> postings = entry.getValue();
-                    if(postings.isEmpty()){
-                        continue;
-                    }
-                    Posting lastPosting = postings.get(postings.size() - 1);
-
-                    if(lastPosting.getDocumentId() == i){
-                        int score = documentScores.getOrDefault(i, 0);
-                        score += lastPosting.getPositions().size();
-                        documentScores.put(i, score);
-                        postings.remove(postings.size() - 1);
-                    }
+                if(documentScore > 0){
+                    documentScores.put(i, documentScore);
                 }
             }
 
-            PriorityQueue<DocumentScore> scoreRank = new PriorityQueue<>((a, b) -> b.score - a.score);
+            PriorityQueue<DocumentScore> scoreRank = new PriorityQueue<>(
+                    (a, b) -> {
+                        float compareResult = b.score - a.score;
+                        return compareResult >= 0? (int) Math.ceil(compareResult) : (int) Math.floor(compareResult);
+                    });
 
-            for(Map.Entry<Integer, Integer> entry : documentScores.entrySet()){
+            for(Map.Entry<Integer, Float> entry : documentScores.entrySet()){
                 DocumentScore documentScore = new DocumentScore(entry.getKey(), entry.getValue());
                 scoreRank.add(documentScore);
             }
 
             while(topKdoc > 0 && !scoreRank.isEmpty()){
-                result.add(scoreRank.poll().id);
+                topKDocumentScores.add(scoreRank.poll());
                 topKdoc--;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return result;
+        return topKDocumentScores;
     }
 
 
@@ -118,23 +125,15 @@ public class QueryEngine {
         return termSets;
     }
 
-    static class DocumentScore{
-        protected int id;
-        protected int score;
 
-        DocumentScore(int id, int score){
-            this.id = id;
-            this.score = score;
-        }
-    }
 
-    public static void printResult(List<Integer> results){
+    public static void printResult(List<DocumentScore> results){
 
         StringBuilder sb = new StringBuilder();
         sb.append("Top ").append(results.size()).append(" results: ");
 
-        for(int result : results){
-            sb.append(result).append(" ");
+        for(DocumentScore result : results){
+            sb.append(result.id).append(" ");
         }
 
         System.out.println(sb.toString());
@@ -146,10 +145,9 @@ public class QueryEngine {
         int topKresult = args.length > 2?Integer.valueOf(args[2]):1;
 
         for(List<String> set : termSets){
-            List<Integer> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set);
+            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, "BM25");
             printResult(docs);
         }
-
 
     }
 }
