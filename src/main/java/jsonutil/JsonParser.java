@@ -1,7 +1,8 @@
-package JsonUtil;
+package jsonutil;
 
-import DataObject.Corpus;
-import DataObject.LookupItem;
+import dataobject.Corpus;
+import dataobject.DocumentInfo;
+import dataobject.LookupItem;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,10 +15,10 @@ import java.util.Map;
 public class JsonParser {
 
     /**
-     * This method parses a Json file into list of DataObject.Scene
+     * This method parses a Json file into list of dataobject.Scene
      *
      * @param jsonFile a Json file to be parsed
-     * @return list of DataObject.Scene
+     * @return list of dataobject.Scene
      */
 
     public Corpus parseJson2Corpus(String jsonFile){
@@ -48,6 +49,21 @@ public class JsonParser {
 
 
         return lookupTable;
+    }
 
+    public Map<String, DocumentInfo> parseJson2DocumentInfo(String jsonFile){
+
+        Map<String, DocumentInfo> documentInfo = null;
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String content = new String(Files.readAllBytes(Paths.get(jsonFile)));
+            documentInfo = mapper.readValue(content, new TypeReference<Map<String, DocumentInfo>>(){});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return documentInfo;
     }
 }

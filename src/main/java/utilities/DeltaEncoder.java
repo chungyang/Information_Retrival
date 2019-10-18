@@ -1,6 +1,6 @@
-package Utilities;
+package utilities;
 
-import DataObject.Posting;
+import dataobject.Posting;
 
 import java.util.ArrayList;
 import java.util.List;

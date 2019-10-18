@@ -1,13 +1,11 @@
-import Utilities.Compressor;
-import Utilities.DefaultCompressor;
-import Utilities.DeltaEncoder;
-import Utilities.VbyteCompressor;
-import DataObject.Corpus;
-import DataObject.LookupItem;
-import DataObject.Posting;
-import DataObject.Scene;
-import JsonUtil.JsonParser;
-import JsonUtil.LookupItemSerializer;
+import dataobject.*;
+import jsonutil.DocumentInfoSerializer;
+import utilities.Compressor;
+import utilities.DefaultCompressor;
+import utilities.DeltaEncoder;
+import utilities.VbyteCompressor;
+import jsonutil.JsonParser;
+import jsonutil.LookupItemSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -24,13 +22,16 @@ public class Indexer {
     @JsonSerialize(using = LookupItemSerializer.class)
     private Map<String, LookupItem> lookupTable = new HashMap<>();
 
+    @JsonSerialize(using = DocumentInfoSerializer.class)
+    private Map<String, DocumentInfo> documentInfo = new HashMap<>();
 
-    public void buildIndex(String binaryFileName, String jsonFileName){
+
+    public void buildIndex(String binaryFileName, String lookupJsonFileName, String documentInfoJson){
 
         JsonParser jsonParser = new JsonParser();
         Corpus corpus = jsonParser.parseJson2Corpus("shakespeare-scenes.json");
         int shortestSceneLength = Integer.MAX_VALUE;
-        int shortestSceneID = -1;
+        String shortestSceneID = "";
         float averageLength = 0;
         float count = 0;
 
@@ -43,10 +44,7 @@ public class Indexer {
             averageLength += words.length;
             count++;
 
-            if(words.length < shortestSceneLength){
-                shortestSceneID = sceneNumber;
-                shortestSceneLength = words.length;
-            }
+
             String sceneId = scene.getSceneId();
             String playId = scene.getPlayId();
             Set<String> seenWords = new HashSet<>();
@@ -54,6 +52,13 @@ public class Indexer {
             int playLength = playLengths.getOrDefault(playId, 0);
             playLength += words.length;
             playLengths.put(playId, playLength);
+
+            documentInfo.put(String.valueOf(sceneNumber + 1), new DocumentInfo(words.length, sceneId));
+
+            if(words.length < shortestSceneLength){
+                shortestSceneID = sceneId;
+                shortestSceneLength = words.length;
+            }
 
             for(int position = 0; position < words.length; position++){
 
@@ -93,11 +98,12 @@ public class Indexer {
 
         System.out.println("Longest Play ID: " + longestPlay.id);
 
-        flushToDisk(invertedIndex, binaryFileName, jsonFileName);
+        flushToDisk(invertedIndex, binaryFileName, lookupJsonFileName, documentInfoJson);
     }
 
 
-    private void flushToDisk(Map<String, List<Posting>> invertedIndex, String binaryFileName, String jsonFileName){
+    private void flushToDisk(Map<String, List<Posting>> invertedIndex, String binaryFileName,
+                             String lookupJsonFileName, String documentInfoJson){
 
         try(RandomAccessFile randomAccessFile = new RandomAccessFile(binaryFileName, "rw");
         RandomAccessFile compressRandomAccessFile = new RandomAccessFile("compress_" + binaryFileName, "rw")) {
@@ -129,9 +135,8 @@ public class Indexer {
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(jsonFileName), lookupTable);
-
-
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(lookupJsonFileName), lookupTable);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(documentInfoJson), documentInfo);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -186,10 +191,10 @@ public class Indexer {
     public static void main(String[] args){
         Indexer indexer = new Indexer();
         String binaryFileName = "binary.dat";
-        String jsonFileName = "lookup.json";
+        String lookupJsonFileName = "lookup.json";
+        String documentInfoJson = "documentinfo.json";
 
-
-        indexer.buildIndex(binaryFileName, jsonFileName);
+        indexer.buildIndex(binaryFileName, lookupJsonFileName, documentInfoJson);
     }
     
 }

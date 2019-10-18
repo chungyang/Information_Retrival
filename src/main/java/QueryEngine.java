@@ -1,9 +1,11 @@
-import Utilities.Compressor;
-import Utilities.DefaultCompressor;
-import Utilities.VbyteCompressor;
-import DataObject.LookupItem;
-import DataObject.Posting;
-import JsonUtil.JsonParser;
+import dataobject.Corpus;
+import dataobject.DocumentInfo;
+import utilities.Compressor;
+import utilities.DefaultCompressor;
+import utilities.VbyteCompressor;
+import dataobject.LookupItem;
+import dataobject.Posting;
+import jsonutil.JsonParser;
 
 import java.io.*;
 import java.util.*;
@@ -11,12 +13,17 @@ import java.util.*;
 public class QueryEngine {
 
     private static Map<String, LookupItem> lookupTable;
+    private static Map<String, DocumentInfo> documentInfoMap;
     private static List<String> terms;
+    private static int numberOfDocument;
 
     static{
         JsonParser jsonParser = new JsonParser();
         lookupTable = jsonParser.parseJson2LookupTable("lookup.json");
+        documentInfoMap = jsonParser.parseJson2DocumentInfo("documentinfo.json");
         terms = new ArrayList<>(lookupTable.keySet());
+        Corpus corpus = jsonParser.parseJson2Corpus("shakespeare-scenes.json");
+        numberOfDocument = corpus.getCorpus().size();
     }
 
     public static List<Integer> documentQuery(String fileName, boolean isCompress, int topKdoc, List<String> queryTerms){
@@ -48,7 +55,7 @@ public class QueryEngine {
 
             //The posting implementation is backed by an ArrayList. Removing element from
             //the end of list is less expensive because elements won't need to be shifted
-            for(int i = 748; i > 0; i--){
+            for(int i = numberOfDocument; i > 0; i--){
 
                 for(Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()){
 
@@ -94,8 +101,10 @@ public class QueryEngine {
         try(BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))){
 
             String line;
+
             while((line = bufferedReader.readLine()) != null){
                 List<String> termSet = new ArrayList<>();
+
                 for(String s : line.split("\\s+")){
                     termSet.add(s);
                 }

@@ -1,6 +1,6 @@
-package Utilities;
+package utilities;
 
-import DataObject.LookupItem;
+import dataobject.LookupItem;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

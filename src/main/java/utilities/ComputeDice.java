@@ -1,10 +1,7 @@
-package Utilities;
+package utilities;
 
-import Utilities.Compressor;
-import Utilities.DefaultCompressor;
-import Utilities.VbyteCompressor;
-import DataObject.LookupItem;
-import DataObject.Posting;
+import dataobject.LookupItem;
+import dataobject.Posting;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

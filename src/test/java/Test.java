@@ -1,9 +1,9 @@
-import Utilities.Compressor;
-import Utilities.DefaultCompressor;
-import Utilities.VbyteCompressor;
-import DataObject.LookupItem;
-import DataObject.Posting;
-import JsonUtil.JsonParser;
+import utilities.Compressor;
+import utilities.DefaultCompressor;
+import utilities.VbyteCompressor;
+import dataobject.LookupItem;
+import dataobject.Posting;
+import jsonutil.JsonParser;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -19,8 +19,8 @@ public class Test {
         JsonParser jsonParser = new JsonParser();
         Map<String, LookupItem> lookupTable = jsonParser.parseJson2LookupTable("lookup.json");
 //
-//        Utilities.Compressor defaultCompressor = new Utilities.DefaultCompressor();
-//        Utilities.Compressor vbyteCompressor = new Utilities.VbyteCompressor();
+//        utilities.Compressor defaultCompressor = new utilities.DefaultCompressor();
+//        utilities.Compressor vbyteCompressor = new utilities.VbyteCompressor();
 //        RandomAccessFile r1 = new RandomAccessFile("test.dat", "rw");
 //        RandomAccessFile r2 = new RandomAccessFile("compress_test.dat", "rw");
 //

@@ -1,4 +1,4 @@
-package DataObject;
+package dataobject;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 

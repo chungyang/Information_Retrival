@@ -1,7 +1,7 @@
-package Utilities;
+package utilities;
 
-import DataObject.LookupItem;
-import DataObject.Posting;
+import dataobject.LookupItem;
+import dataobject.Posting;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
