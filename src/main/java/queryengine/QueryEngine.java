@@ -1,8 +1,7 @@
 package queryengine;
 
 import dataobject.*;
-import retrievalmodel.DocumentScorer;
-import retrievalmodel.DocumentScorerFactory;
+import retrievalmodel.*;
 import utilities.Compressor;
 import utilities.DefaultCompressor;
 import utilities.Utils;
@@ -30,7 +29,7 @@ public class QueryEngine {
     }
 
     public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,
-                                              List<String> queryTerms, String scorerType){
+                                              List<String> queryTerms, ScoreType scorerType){
 
         String[] queryTermsArray = new String[queryTerms.size()];
         queryTermsArray = queryTerms.toArray(queryTermsArray);
@@ -39,13 +38,13 @@ public class QueryEngine {
     }
 
     public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,
-                                                    String queryTerms, String scorerType){
+                                                    String queryTerms, ScoreType scorerType){
 
 
         return documentQuery(fileName, isCompress, topKdoc, queryTerms.split("\\s+"), scorerType);
     }
 
-    public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,  String[] queryTerms, String scorerType){
+    public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,  String[] queryTerms, ScoreType scorerType){
 
         List<DocumentScore> topKDocumentScores = new LinkedList<>();
 
@@ -76,16 +75,17 @@ public class QueryEngine {
                 float documentScore = documentScorer.scoreDocument(i, queryPostings,
                         queryFrequencies, documentStats);
 
-                if(documentScore > 0){
+                if(scoreFilter(scorerType, documentScore)){
                     documentScores.put(i, documentScore);
                 }
             }
 
-            PriorityQueue<DocumentScore> scoreRank = new PriorityQueue<>(
-                    (a, b) -> {
-                        float compareResult = b.score - a.score;
-                        return compareResult >= 0? (int) Math.ceil(compareResult) : (int) Math.floor(compareResult);
-                    });
+
+
+            PriorityQueue<DocumentScore> scoreRank = new PriorityQueue<>((a, b) -> {
+                float compareResult = b.getScore() - a.getScore();
+                return compareResult >= 0? (int) Math.ceil(compareResult) : (int) Math.floor(compareResult);
+            });
 
             for(Map.Entry<Integer, Float> entry : documentScores.entrySet()){
                 DocumentScore documentScore = new DocumentScore(entry.getKey(), entry.getValue());
@@ -94,9 +94,7 @@ public class QueryEngine {
 
             while(topKdoc > 0 && !scoreRank.isEmpty()){
 
-                if(scoreRank.peek().getScore() > 0) {
-                    topKDocumentScores.add(scoreRank.poll());
-                }
+                topKDocumentScores.add(scoreRank.poll());
                 topKdoc--;
             }
         } catch (IOException e) {
@@ -106,6 +104,24 @@ public class QueryEngine {
         return topKDocumentScores;
     }
 
+    private static boolean scoreFilter(ScoreType scoreType, float score){
+
+        switch (scoreType){
+
+            case BM25:
+                return score > 0;
+
+            case JELINEKMERCER:
+                return true;
+
+            case DIRICHLET:
+                return true;
+
+            default:
+                return true;
+        }
+
+    }
 
 
     public static List<List<String>> getTermSets(String fileName){
@@ -153,8 +169,8 @@ public class QueryEngine {
         int id = 1;
         for(List<String> set : termSets){
             String queryid = "Q" + id;
-            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, "BM25");
-            Utils.writeTREC("bm25.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-bm25", queryid, "1.2", "500");
+            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.JELINEKMERCER);
+            Utils.writeTREC("jl-jm.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-ql-jm", queryid, "0.2");
             id++;
         }
 

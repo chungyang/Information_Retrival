@@ -3,20 +3,21 @@ package retrievalmodel;
 
 public class DocumentScorerFactory {
 
-    public static DocumentScorer getDocumentScorer(String scorerType){
+    public static DocumentScorer getDocumentScorer(ScoreType scorerType){
 
         DocumentScorer documentScorer = null;
 
         switch (scorerType){
 
-            case "Bm25":
+            case BM25:
                 documentScorer = new Bm25();
                 break;
 
-            case "Dirichlet":
-                break;
+            case DIRICHLET:
+                documentScorer = new Dirichlet();
 
-            case "Jelinik-Mercer":
+            case JELINEKMERCER:
+                documentScorer = new JelinekMercer();
                 break;
 
             default:
