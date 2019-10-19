@@ -12,7 +12,8 @@ import java.util.Set;
 public class Dirichlet implements DocumentScorer{
     @Override
     public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings,
-                               Map<String, Integer> queryFrequencies, DocumentStats documentStats) {
+                               Map<String, Integer> queryFrequencies,
+                               DocumentStats documentStats, Map<Parameters, Float> params) {
         return 0;
     }
 

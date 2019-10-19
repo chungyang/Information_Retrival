@@ -19,12 +19,12 @@ public class Bm25 implements DocumentScorer {
     @Override
     public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings,
                                Map<String, Integer> queryFrequencies,
-                               DocumentStats documentStats) {
+                               DocumentStats documentStats, Map<Parameters, Float> params) {
 
         float score = 0f;
-        float k1 = 1.2f;
-        float k2 = 500;
-        float b = 0.75f;
+        float k1 = params.get(Parameters.K1);
+        float k2 = params.get(Parameters.K2);
+        float b = params.get(Parameters.B);
         float dl = documentStats.getDocumentInfos().get(String.valueOf(documentId)).getDocumentLength();
         float numebrOfDoc = documentStats.getDocumentInfos().size();
         float k = k1 * ((1 - b) + b * (dl / documentStats.getAverageDocumentLength()));

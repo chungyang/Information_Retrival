@@ -13,7 +13,7 @@ public interface DocumentScorer {
 
     public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings,
                                Map<String, Integer> queryFrequencies,
-                               DocumentStats documentStats);
+                               DocumentStats documentStats, Map<Parameters, Float> params);
 
 
 }

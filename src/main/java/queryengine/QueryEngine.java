@@ -29,22 +29,18 @@ public class QueryEngine {
     }
 
     public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,
-                                              List<String> queryTerms, ScoreType scorerType){
+                                              List<String> queryTerms, ScoreType scorerType,
+                                                    Map<Parameters, Float> params){
 
         String[] queryTermsArray = new String[queryTerms.size()];
         queryTermsArray = queryTerms.toArray(queryTermsArray);
 
-        return documentQuery(fileName, isCompress, topKdoc, queryTermsArray, scorerType);
+        return documentQuery(fileName, isCompress, topKdoc, queryTermsArray, scorerType, params);
     }
 
     public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,
-                                                    String queryTerms, ScoreType scorerType){
-
-
-        return documentQuery(fileName, isCompress, topKdoc, queryTerms.split("\\s+"), scorerType);
-    }
-
-    public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,  String[] queryTerms, ScoreType scorerType){
+                                                    String[] queryTerms, ScoreType scorerType,
+                                                    Map<Parameters, Float> params){
 
         List<DocumentScore> topKDocumentScores = new LinkedList<>();
 
@@ -73,7 +69,7 @@ public class QueryEngine {
             for(int i = numberOfDocument; i > 0; i--){
 
                 float documentScore = documentScorer.scoreDocument(i, queryPostings,
-                        queryFrequencies, documentStats);
+                        queryFrequencies, documentStats, params);
 
                 if(scoreFilter(scorerType, documentScore)){
                     documentScores.put(i, documentScore);
@@ -166,11 +162,17 @@ public class QueryEngine {
         List<List<String>> termSets = getTermSets(args[1]);
         int topKresult = args.length > 2?Integer.valueOf(args[2]):1;
 
+        Map<Parameters, Float> bm25params = new HashMap<>();
+        bm25params.put(Parameters.B,  0.75f);
+        bm25params.put(Parameters.K1,  1.2f);
+        bm25params.put(Parameters.K2,  500f);
+        Utils.deleteFile("bm25.trecrun");
+
         int id = 1;
         for(List<String> set : termSets){
             String queryid = "Q" + id;
-            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.BM25);
-            Utils.writeTREC("jl-jm.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-ql-jm", queryid, "0.2");
+            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.BM25, bm25params);
+            Utils.writeTREC("bm25.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-bm25", queryid, "1.2", "500");
             id++;
         }
 

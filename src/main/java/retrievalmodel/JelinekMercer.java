@@ -13,7 +13,8 @@ public class JelinekMercer implements DocumentScorer{
 
     @Override
     public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings,
-                               Map<String, Integer> queryFrequencies, DocumentStats documentStats) {
+                               Map<String, Integer> queryFrequencies,
+                               DocumentStats documentStats, Map<Parameters, Float> params) {
 
         float score = 0;
         float lamda = 0.2f;
