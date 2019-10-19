@@ -169,7 +169,7 @@ public class QueryEngine {
         int id = 1;
         for(List<String> set : termSets){
             String queryid = "Q" + id;
-            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.JELINEKMERCER);
+            List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.BM25);
             Utils.writeTREC("jl-jm.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-ql-jm", queryid, "0.2");
             id++;
         }

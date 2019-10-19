@@ -50,16 +50,4 @@ public class Bm25 implements DocumentScorer {
         return score;
     }
 
-    @Override
-    public Map<Integer, Float> scoreDocuments(Set<Integer> documentIDs, Map<String, List<Posting>> queryPostings,
-                                              Map<String, Integer> queryFrequencies,
-                                              Map<String, DocumentInfo> documentInfo, float averageDocLength) {
-
-
-
-
-
-
-        return null;
-    }
 }
