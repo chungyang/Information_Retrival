@@ -12,7 +12,6 @@ import java.util.*;
 public class ComputeDice {
 
 
-
     public static void getDiceCoefficient(List<List<String>> termSets, boolean isCompress, String postingFileName,
                                           List<String> allTemrs, Map<String, LookupItem> lookupTable) throws IOException {
 

@@ -8,4 +8,12 @@ public class DocumentScore{
         this.id = id;
         this.score = score;
     }
+
+    public int getId(){
+        return this.id;
+    }
+
+    public float getScore(){
+        return this.score;
+    }
 }

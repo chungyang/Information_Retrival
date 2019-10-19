@@ -32,7 +32,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Indexer</mainClass>
+                            <mainClass>queryengine.Indexer</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

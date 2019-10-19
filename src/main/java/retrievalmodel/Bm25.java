@@ -25,17 +25,22 @@ public class Bm25 implements DocumentScorer {
 
         for(Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()){
 
-            float fi = 0f;
+            float fi;
             float ni = entry.getValue().size();
             int qfi = queryFrequencies.get(entry.getKey());
 
+            if(documentId == 34){
+                int i = 0;
+            }
             for(Posting posting : entry.getValue()){
+
                 if(posting.getDocumentId() == documentId){
                     fi = posting.getPositions().size();
+                    score += Math.log((1 / ((ni + 0.5) / (numebrOfDoc - ni + 0.5))))
+                            * (k1 + 1) * fi / (k + fi) * (k2 + 1) * qfi / (k2 + qfi);
+
                 }
             }
-            score += Math.log((1 / ((ni + 0.5) / (numebrOfDoc - ni + 0.5)))
-                    * ((k1 + 1) * fi / (k + fi)) * ((k2 + 1) * qfi / (k2 + qfi)));
         }
 
 

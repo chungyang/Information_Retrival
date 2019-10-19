@@ -8,22 +8,22 @@ This project uses Maven to handle dependency management and build. If you don't 
 The project uses Jackson, its depencies is included in Maven build files. As long as you are connected to the internet, the dependencies should be resolved by Maven correctly.
 
 ### Build
-There are two runnable main classes (Indexer and QueryEngine) and each one has its own pom.xml. 
-To build Indexer, 
+There are two runnable main classes (queryengine.Indexer and queryengine.QueryEngine) and each one has its own pom.xml.
+To build queryengine.Indexer,
 ```
 mvn -f pom.xml  compile assembly:single
 ```
-To build QueryEngine,
+To build queryengine.QueryEngine,
 ```
 mvn -f pomquery.xml  compile assembly:single
 ```
 
 ### Run
-To run Indexer, 
+To run queryengine.Indexer,
 ```
-java -cp target/Indexer-1.0-SNAPSHOT-jar-with-dependencies.jar Indexer
+java -cp target/queryengine.Indexer-1.0-SNAPSHOT-jar-with-dependencies.jar queryengine.Indexer
 ```
-To run QueryEngine, 
+To run queryengine.QueryEngine,
 ```
-java -cp target/QueryEngine-1.0-SNAPSHOT-jar-with-dependencies.jar QueryEngine true 14term.txt 5
+java -cp target/queryengine.QueryEngine-1.0-SNAPSHOT-jar-with-dependencies.jar queryengine.QueryEngine true 14term.txt 5
 ```
