@@ -1,6 +1,7 @@
 package retrievalmodel;
 
 import dataobject.DocumentInfo;
+import dataobject.DocumentStats;
 import dataobject.Posting;
 
 import java.util.List;
@@ -9,7 +10,8 @@ import java.util.Set;
 
 public class Count implements DocumentScorer {
     @Override
-    public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings, Map<String, Integer> queryFrequencies, DocumentInfo documentInfo, int numebrOfDoc, float averageDocLength) {
+    public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings, Map<String, Integer> queryFrequencies,
+                               DocumentStats documentStats) {
         //                for(Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()){
 //
 //                    List<Posting> postings = entry.getValue();

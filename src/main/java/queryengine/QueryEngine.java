@@ -1,15 +1,12 @@
 package queryengine;
 
-import dataobject.Corpus;
-import dataobject.DocumentInfo;
+import dataobject.*;
 import retrievalmodel.DocumentScorer;
 import retrievalmodel.DocumentScorerFactory;
 import utilities.Compressor;
 import utilities.DefaultCompressor;
 import utilities.Utils;
 import utilities.VbyteCompressor;
-import dataobject.LookupItem;
-import dataobject.Posting;
 import jsonutil.JsonParser;
 
 import java.io.*;
@@ -18,19 +15,18 @@ import java.util.*;
 public class QueryEngine {
 
     private static Map<String, LookupItem> lookupTable;
-    private static Map<String, DocumentInfo> documentInfoMap;
+    private static DocumentStats documentStats;
     private static List<String> terms;
     private static int numberOfDocument;
-    private static float averageDocLength;
+//    private static float averageDocLength;
 
     static{
         JsonParser jsonParser = new JsonParser();
         lookupTable = jsonParser.parseJson2LookupTable("lookup.json");
-        documentInfoMap = jsonParser.parseJson2DocumentInfo("documentinfo.json");
+        documentStats = jsonParser.parseJson2DocumentStats("documentinfo.json");
         terms = new ArrayList<>(lookupTable.keySet());
         Corpus corpus = jsonParser.parseJson2Corpus("shakespeare-scenes.json");
         numberOfDocument = corpus.getCorpus().size();
-        averageDocLength = Utils.getAverageDocLength(corpus);
     }
 
     public static List<DocumentScore> documentQuery(String fileName, boolean isCompress, int topKdoc,
@@ -78,7 +74,7 @@ public class QueryEngine {
             for(int i = numberOfDocument; i > 0; i--){
 
                 float documentScore = documentScorer.scoreDocument(i, queryPostings,
-                        queryFrequencies, documentInfoMap.get(String.valueOf(i)), numberOfDocument, averageDocLength);
+                        queryFrequencies, documentStats);
 
                 if(documentScore > 0){
                     documentScores.put(i, documentScore);
@@ -158,9 +154,10 @@ public class QueryEngine {
         for(List<String> set : termSets){
             String queryid = "Q" + id;
             List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, "BM25");
-            Utils.writeTREC("bm25.trecrun", true, docs, documentInfoMap, "chungtingyang-bm25", queryid, "1.2", "500");
+            Utils.writeTREC("bm25.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-bm25", queryid, "1.2", "500");
             id++;
         }
+
 
     }
 }

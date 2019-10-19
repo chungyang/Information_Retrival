@@ -65,6 +65,7 @@ public class Utils {
 
     }
 
+
     public static float getAverageDocLength(Corpus corpus){
         int numberOfDocument = corpus.getCorpus().size();
         float lengthSum = 0;
@@ -74,6 +75,17 @@ public class Utils {
         }
 
         return lengthSum / numberOfDocument;
+    }
+
+    public static float getTotalWordOccurences(Corpus corpus){
+
+        float totalWordOccurences = 0;
+
+        for(Scene scene : corpus.getCorpus()){
+            totalWordOccurences += scene.getText().split("\\s+").length;
+        }
+
+        return totalWordOccurences;
     }
 
     public static void randomSelect(int numberOfTerms, int numberOfSets, String outputFileName,

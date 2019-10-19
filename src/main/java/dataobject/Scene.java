@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 
 public class Scene {
 
-    @JsonRawValue
     private String playId;
-    @JsonRawValue
+
     private String sceneId;
+
     @JsonRawValue
     private int sceneNum;
-    @JsonRawValue
+
     private String text;
 
 

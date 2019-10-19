@@ -1,7 +1,7 @@
 package queryengine;
 
 import dataobject.*;
-import jsonutil.DocumentInfoSerializer;
+import jsonutil.DocumentStatsSerializer;
 import utilities.Compressor;
 import utilities.DefaultCompressor;
 import utilities.DeltaEncoder;
@@ -24,8 +24,10 @@ public class Indexer {
     @JsonSerialize(using = LookupItemSerializer.class)
     private Map<String, LookupItem> lookupTable = new HashMap<>();
 
-    @JsonSerialize(using = DocumentInfoSerializer.class)
     private Map<String, DocumentInfo> documentInfo = new HashMap<>();
+
+    @JsonSerialize(using = DocumentStatsSerializer.class)
+    private DocumentStats documentStats;
 
 
     public void buildIndex(String binaryFileName, String lookupJsonFileName, String documentInfoJson){
@@ -34,7 +36,7 @@ public class Indexer {
         Corpus corpus = jsonParser.parseJson2Corpus("shakespeare-scenes.json");
         int shortestSceneLength = Integer.MAX_VALUE;
         String shortestSceneID = "";
-        float averageLength = 0;
+        float totalLength = 0;
         float count = 0;
 
         Map<String, Integer> playLengths = new HashMap<>();
@@ -43,7 +45,7 @@ public class Indexer {
 
             String[] words = scene.getText().split("\\s+");
             int sceneNumber = scene.getSceneNum();
-            averageLength += words.length;
+            totalLength += words.length;
             count++;
 
 
@@ -80,7 +82,9 @@ public class Indexer {
             }
 
         }
-        System.out.println("Average Scene Length: " + (averageLength / count));
+
+        documentStats = new DocumentStats((totalLength / count), totalLength, documentInfo);
+        System.out.println("Average Scene Length: " + (totalLength / count));
         System.out.println("Shortest Scene ID: " + shortestSceneID);
 
         PriorityQueue<Play> plays = new PriorityQueue<>((a,b)->a.length - b.length);
@@ -138,7 +142,7 @@ public class Indexer {
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(lookupJsonFileName), lookupTable);
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(documentInfoJson), documentInfo);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(documentInfoJson), documentStats);
         }
         catch (IOException e) {
             e.printStackTrace();

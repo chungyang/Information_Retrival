@@ -3,9 +3,6 @@ package dataobject;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
-/**
- * Created by chungyang on 10/17/19.
- */
 public class DocumentInfo {
 
     @JsonRawValue

@@ -1,7 +1,11 @@
 package retrievalmodel;
 
+import dataobject.Corpus;
 import dataobject.DocumentInfo;
+import dataobject.DocumentStats;
 import dataobject.Posting;
+import jsonutil.JsonParser;
+import utilities.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -11,17 +15,19 @@ import java.util.Set;
 public class Bm25 implements DocumentScorer {
 
 
+
     @Override
     public float scoreDocument(int documentId, Map<String, List<Posting>> queryPostings,
                                Map<String, Integer> queryFrequencies,
-                               DocumentInfo documentInfo, int numebrOfDoc, float averageDocLength) {
+                               DocumentStats documentStats) {
 
         float score = 0f;
         float k1 = 1.2f;
         float k2 = 500;
         float b = 0.75f;
-        float dl = documentInfo.getDocumentLength();
-        float k = k1 * ((1 - b) + b * (dl / averageDocLength));
+        float dl = documentStats.getDocumentInfos().get(String.valueOf(documentId)).getDocumentLength();
+        float numebrOfDoc = documentStats.getDocumentInfos().size();
+        float k = k1 * ((1 - b) + b * (dl / documentStats.getAverageDocumentLength()));
 
         for(Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()){
 
@@ -29,9 +35,6 @@ public class Bm25 implements DocumentScorer {
             float ni = entry.getValue().size();
             int qfi = queryFrequencies.get(entry.getKey());
 
-            if(documentId == 34){
-                int i = 0;
-            }
             for(Posting posting : entry.getValue()){
 
                 if(posting.getDocumentId() == documentId){

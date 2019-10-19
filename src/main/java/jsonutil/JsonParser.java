@@ -2,6 +2,7 @@ package jsonutil;
 
 import dataobject.Corpus;
 import dataobject.DocumentInfo;
+import dataobject.DocumentStats;
 import dataobject.LookupItem;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,19 +52,19 @@ public class JsonParser {
         return lookupTable;
     }
 
-    public Map<String, DocumentInfo> parseJson2DocumentInfo(String jsonFile){
+    public DocumentStats parseJson2DocumentStats(String jsonFile){
 
-        Map<String, DocumentInfo> documentInfo = null;
+        DocumentStats documentStats = null;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
             String content = new String(Files.readAllBytes(Paths.get(jsonFile)));
-            documentInfo = mapper.readValue(content, new TypeReference<Map<String, DocumentInfo>>(){});
+            documentStats = mapper.readValue(content, DocumentStats.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
-        return documentInfo;
+        return documentStats;
     }
 }
