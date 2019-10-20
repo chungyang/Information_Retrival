@@ -6,14 +6,9 @@ import dataobject.LookupItem;
 import dataobject.Scene;
 import queryengine.DocumentScore;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 public class Utils {
@@ -60,7 +55,7 @@ public class Utils {
                 rank++;
 
             }
-            } catch (IOException e1) {
+        } catch (IOException e1) {
             e1.printStackTrace();
         }
 
@@ -118,5 +113,42 @@ public class Utils {
         file.delete();
     }
 
+    public static void getCommonResults(String outputFileName, String queryID, String... queryResultFileNames){
 
+        Set<String> sceneIdentifiers = new HashSet<>();
+
+        for(String resultFileName : queryResultFileNames){
+
+            try(BufferedReader bufferedReader = new BufferedReader(new FileReader(resultFileName))){
+
+                String line;
+
+                while((line = bufferedReader.readLine()) != null){
+
+                    String[] entryData = line.split("\\s+");
+
+                    if(entryData[0].equals(queryID)){
+                        sceneIdentifiers.add(entryData[2]);
+                    }
+
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName, true))) {
+
+            for(String sceneIdentifier : sceneIdentifiers){
+                writer.append(sceneIdentifier).append("\n");
+            }
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+    }
 }
+
+

@@ -191,6 +191,7 @@ public class QueryEngine {
             id++;
         }
 
-
+//        Utils.deleteFile("judgement.txt");
+//        Utils.getCommonResults("judgement.txt", "Q3", "bm25.trecrun", "ql-jm.trecrun", "ql-dir.trecrun");
     }
 }
