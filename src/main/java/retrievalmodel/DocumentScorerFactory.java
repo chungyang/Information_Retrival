@@ -15,6 +15,7 @@ public class DocumentScorerFactory {
 
             case DIRICHLET:
                 documentScorer = new Dirichlet();
+                break;
 
             case JELINEKMERCER:
                 documentScorer = new JelinekMercer();

@@ -17,23 +17,26 @@ public class JelinekMercer implements DocumentScorer{
                                DocumentStats documentStats, Map<Parameters, Float> params) {
 
         float score = 0;
-        float lamda = 0.2f;
+        float lamda = params.get(Parameters.LAMBDA);
         float c = documentStats.getTotalDocumentLength();
         float d = documentStats.getDocumentInfos().get(String.valueOf(documentId)).getDocumentLength();
-        float ci = 0;
+
 
         for (Map.Entry<String, List<Posting>> entry : queryPostings.entrySet()) {
-
+            float ci = 0;
             float fqi = 0;
             for(Posting posting : entry.getValue()){
                 ci += posting.getPositions().size();
 
                 if(posting.getDocumentId() == documentId){
                     fqi = posting.getPositions().size();
+                    break;
                 }
             }
 
-            score += Math.log((1 - lamda) * (fqi / d) + lamda * (ci / c));
+            float termScore = (float) Math.log((1 - lamda) * (fqi / d) + lamda * (ci / c));
+            float termFrequency = queryFrequencies.get(entry.getKey());
+            score += termScore * termFrequency;
 
         }
 

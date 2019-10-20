@@ -168,11 +168,26 @@ public class QueryEngine {
         bm25params.put(Parameters.K2,  500f);
         Utils.deleteFile("bm25.trecrun");
 
+        Map<Parameters, Float> jmparams = new HashMap<>();
+        jmparams.put(Parameters.LAMBDA,  0.2f);
+        Utils.deleteFile("ql-jm.trecrun");
+
+        Map<Parameters, Float> dirparams = new HashMap<>();
+        dirparams.put(Parameters.MU,  2000f);
+        Utils.deleteFile("ql-dir.trecrun");
+
         int id = 1;
         for(List<String> set : termSets){
+
             String queryid = "Q" + id;
             List<DocumentScore> docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.BM25, bm25params);
             Utils.writeTREC("bm25.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-bm25", queryid, "1.2", "500");
+
+            docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.JELINEKMERCER, jmparams);
+            Utils.writeTREC("ql-jm.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-jm-ql", queryid, "0.2");
+
+            docs = documentQuery(binaryFilename, Boolean.valueOf(args[0]), topKresult, set, ScoreType.DIRICHLET, dirparams);
+            Utils.writeTREC("ql-dir.trecrun", true, docs, documentStats.getDocumentInfos(), "chungtingyang-jm-dir", queryid, "2000");
             id++;
         }
 

@@ -39,8 +39,9 @@ public class Bm25 implements DocumentScorer {
 
                 if(posting.getDocumentId() == documentId){
                     fi = posting.getPositions().size();
-                    score += Math.log((1 / ((ni + 0.5) / (numebrOfDoc - ni + 0.5))))
+                    score += queryFrequencies.get(entry.getKey()) * Math.log((1 / ((ni + 0.5) / (numebrOfDoc - ni + 0.5))))
                             * (k1 + 1) * fi / (k + fi) * (k2 + 1) * qfi / (k2 + qfi);
+                    break;
 
                 }
             }
