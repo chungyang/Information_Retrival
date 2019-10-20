@@ -21,7 +21,7 @@ mvn -f pomquery.xml  compile assembly:single
 ### Run
 To run queryengine.Indexer,
 ```
-java -jar target/queryengine.Indexer-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/Indexer-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 To run queryengine.QueryEngine,
 ```
