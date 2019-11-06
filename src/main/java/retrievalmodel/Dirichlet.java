@@ -28,7 +28,6 @@ public class Dirichlet implements DocumentScorer{
 
                 if(posting.getDocumentId() == documentId){
                     fqi = posting.getPositions().size();
-                    break;
                 }
             }
 

@@ -30,7 +30,6 @@ public class JelinekMercer implements DocumentScorer{
 
                 if(posting.getDocumentId() == documentId){
                     fqi = posting.getPositions().size();
-                    break;
                 }
             }
 
