@@ -1,37 +1,45 @@
-package inference;
+package nodes;
 
 import index.Index;
 import index.Posting;
-import index.PostingList;
+import nodes.QueryNode;
+import nodes.Window;
 import retrieval.RetrievalModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderedWindow extends Window{
+public class OrderedWindow extends Window {
 
 
-    public OrderedWindow(RetrievalModel model, Index index){
+    public OrderedWindow(RetrievalModel model, Index index, List<QueryNode> children,
+                         int windowSize){
         this.model = model;
         this.index = index;
+        this.children = children;
+        this.getOccurences(windowSize);
     }
 
     @Override
-    public void getOccurences(List<PostingList> postingLists, int windowSize) {
+    public void getOccurences(int windowSize) {
 
         for(int docid = 1; docid < index.getDocCount(); docid++) {
 
             int occurences = 0;
 
-            if (nextCandiate(postingLists, docid)) {
+            if(docid == 62){
+                int fuck = 0;
+            }
+
+            if (nextCandidateDoc(docid)) {
 
                 List<Posting> postings = new ArrayList<>();
 
-                for (int i = 0; i < postingLists.size(); i++) {
-
-                    Posting posting = postingLists.get(i).getCurrentPosting();
-                    posting.resetPositionIndex();
-                    postings.add(posting);
+                for(QueryNode child : this.children){
+                    if(!child.hasMore()) {
+                        return;
+                    }
+                    postings.add(child.nextCandidate());
                 }
 
                 Posting firstPosting = postings.get(0);
@@ -52,17 +60,6 @@ public class OrderedWindow extends Window{
             }
         }
 
-    }
-
-
-    @Override
-    public double score(int docid) {
-
-        if(!occurrences.containsKey(docid)){
-            return 0;
-        }
-
-        return model.scoreOccurrence(occurrences.get(docid), totalOccurences, index.getDocLength(docid));
     }
 
     /**

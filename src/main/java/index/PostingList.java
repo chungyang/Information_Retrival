@@ -48,6 +48,7 @@ public class PostingList {
 		Posting retval = null;
 		try {
 			retval = postings.get(postingsIndex);
+			retval.resetPositionIndex();
 		} catch (IndexOutOfBoundsException ex) {
 			// ignore
 		}
@@ -73,9 +74,9 @@ public class PostingList {
 		postings.add(posting);
 		postingsIndex++;
 	}
-	/**
-	 * @param posting the Posting to add
-	 */
+
+
+
 	public void add(Integer docid, Integer position) {
 		Posting current = getCurrentPosting();
 		if (current != null && current.getDocId().equals(docid) ) {
