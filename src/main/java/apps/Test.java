@@ -37,7 +37,7 @@ public class Test {
         }
 
         RetrievalModel dirichelet = new Dirichlet(index, 1500);
-        ProximityNode proximityNode = new OrderedWindow(dirichelet, index, termNodes, 1);
+        ProximityNode proximityNode = new UnOrderedWindow(dirichelet, index, termNodes, 1);
 
         List<DocumentScore> documentScores = new ArrayList<>();
         for(int i = 1; i <= index.getDocCount(); i++){

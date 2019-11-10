@@ -54,10 +54,6 @@ public class UnOrderedWindow extends Window {
 
     private boolean occurInWindowSize(int windowSize){
 
-        if(children.size() == 1){
-            return true;
-        }
-
         int minPosition = minPosition();
         Set<Integer> childrenContainsTerm = new HashSet<>();
 
