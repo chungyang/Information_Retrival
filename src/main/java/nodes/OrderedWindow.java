@@ -24,13 +24,14 @@ public class OrderedWindow extends Window {
 
         for(int docid = 1; docid < index.getDocCount(); docid++) {
 
-            int occurences = 0;
+            int occurrence = 0;
+            int nextCommonDoc = nextCandidateDoc(docid);
 
-            if(docid == 62){
-                int fuck = 0;
+            if(occurrences.containsKey(nextCommonDoc)){
+                continue;
             }
 
-            if (nextCandidateDoc(docid)) {
+            if (nextCommonDoc != 0) {
 
                 List<Posting> postings = new ArrayList<>();
 
@@ -46,17 +47,18 @@ public class OrderedWindow extends Window {
                 for (int i = 0; i < firstPosting.getPositionSize(); i++) {
 
                     if (occurInWindowSize(postings, windowSize, firstPosting.getCurrentPosition(), 0)) {
-                        occurences++;
+                        occurrence++;
                     }
 
                     firstPosting.skipToNextPosition(firstPosting.getCurrentPosition());
                 }
+
+                if(occurrence > 0){
+                    occurrences.put(nextCommonDoc, occurrence);
+                    totalOccurences += occurrence;
+                }
             }
 
-            if(occurences > 0){
-                occurrences.put(docid, occurences);
-                totalOccurences += occurences;
-            }
         }
 
     }

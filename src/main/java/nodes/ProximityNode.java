@@ -16,22 +16,28 @@ public abstract class ProximityNode extends QueryNode {
     protected Index index;
 
 
-    /**
-     * Skip the posting lists to the specified docId. If specified docId
-     * does not exist in all posting lists, it returns false, otherwise it returns
-     * true.
-     * @param docId
-     * @return
-     */
-    public boolean nextCandidateDoc(int docId){
+    public int nextCandidateDoc(int docId){
 
-        Set<Integer> docIds = new HashSet<>();
+        List<Integer> docs = new ArrayList<>();
 
         for(QueryNode child : children){
-            docIds.add(child.skipTo(docId));
+            int doc = child.skipTo(docId);
+
+            if(doc == 0){
+                return 0;
+            }
+
+            docs.add(doc);
+        }
+        int firstDoc = docs.get(0);
+
+        for(int doc : docs){
+            if(firstDoc != doc){
+                return 0;
+            }
         }
 
-        return docIds.size() == 1;
+        return firstDoc;
     }
 
     @Override
