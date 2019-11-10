@@ -43,14 +43,21 @@ public class OrderedWindow extends Window {
                 }
 
                 Posting firstPosting = postings.get(0);
+                if(nextCommonDoc == 521){
+                    int hey = 0;
+                }
 
                 for (int i = 0; i < firstPosting.getPositionSize(); i++) {
 
-                    if (occurInWindowSize(postings, windowSize, firstPosting.getCurrentPosition(), 0)) {
-                        occurrence++;
+                    if (firstPosting.hasMore()){
+
+                        if(occurInWindowSize(postings, windowSize, firstPosting.getCurrentPosition(), 0)){
+                            occurrence++;
+                        }
+
+                        firstPosting.skipToNextPosition(firstPosting.getCurrentPosition());
                     }
 
-                    firstPosting.skipToNextPosition(firstPosting.getCurrentPosition());
                 }
 
                 if(occurrence > 0){
@@ -90,7 +97,8 @@ public class OrderedWindow extends Window {
 
         currentPosting.skipToNextPosition(position);
 
-        if(currentPosting.getCurrentPosition() != position + windowSize){
+        if(!currentPosting.hasMore() ||
+                currentPosting.getCurrentPosition() != position + windowSize){
             return false;
         }
 

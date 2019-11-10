@@ -76,10 +76,13 @@ public class Posting {
 
 	public void skipToNextPosition(int position){
 
-		while(positionIndex < positions.size() - 1 && positions.get(positionIndex) <= position){
+		while(positionIndex < positions.size() && positions.get(positionIndex) <= position){
 			positionIndex++;
 		}
 	}
 
+	public boolean hasMore(){
+		return positionIndex >= 0 && positionIndex < positions.size();
+	}
 
 }
