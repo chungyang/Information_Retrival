@@ -39,4 +39,9 @@ public abstract class QueryNode {
         }
         return true;
     }
+
+    public void resetNode(){
+        postingList.startIteration();
+        docIndex = 0;
+    }
 }

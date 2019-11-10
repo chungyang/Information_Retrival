@@ -42,4 +42,11 @@ public abstract class ProximityNode extends QueryNode {
         }
         return model.scoreOccurrence(this.occurrences.get(docid), this.totalOccurences, index.getDocLength(docid));
     }
+
+    public void resetChildren(){
+
+        for(QueryNode child : children){
+            child.resetNode();
+        }
+    }
 }

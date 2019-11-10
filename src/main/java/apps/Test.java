@@ -38,10 +38,12 @@ public class Test {
 
         RetrievalModel dirichelet = new Dirichlet(index, 1500);
         ProximityNode proximityNode = new OrderedWindow(dirichelet, index, termNodes, 1);
+        ProximityNode proximityNode2 = new OrderedWindow(dirichelet, index, termNodes, 1);
 
         List<DocumentScore> documentScores = new ArrayList<>();
         for(int i = 1; i <= index.getDocCount(); i++){
             double score = proximityNode.score(i);
+            double score2 = proximityNode2.score(i);
             if(score != 0) {
                 DocumentScore documentScore = new DocumentScore(i, score);
                 documentScores.add(documentScore);

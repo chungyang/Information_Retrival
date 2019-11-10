@@ -19,6 +19,9 @@ public class PostingList {
 	 * reset the list pointer to the first element
 	 */
 	public void startIteration () {
+		for(Posting posting : postings){
+			posting.resetPositionIndex();
+		}
 		postingsIndex = 0;
 	}
 	/**
@@ -48,7 +51,6 @@ public class PostingList {
 		Posting retval = null;
 		try {
 			retval = postings.get(postingsIndex);
-			retval.resetPositionIndex();
 		} catch (IndexOutOfBoundsException ex) {
 			// ignore
 		}

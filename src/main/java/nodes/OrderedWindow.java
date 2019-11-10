@@ -2,8 +2,6 @@ package nodes;
 
 import index.Index;
 import index.Posting;
-import nodes.QueryNode;
-import nodes.Window;
 import retrieval.RetrievalModel;
 
 import java.util.ArrayList;
@@ -17,6 +15,7 @@ public class OrderedWindow extends Window {
         this.model = model;
         this.index = index;
         this.children = children;
+        this.resetChildren();
         this.getOccurences(windowSize);
     }
 
