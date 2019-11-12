@@ -17,6 +17,7 @@ public class TermNode extends ProximityNode{
         this.postingList = index.getPostings(term);
         this.children = new ArrayList<>();
         this.model = model;
+        this.index = index;
         this.getOccurences();
     }
 
@@ -25,6 +26,7 @@ public class TermNode extends ProximityNode{
         this.postingList = index.getPostings(term);
         this.children = children;
         this.model = model;
+        this.index = index;
         this.getOccurences();
     }
 
@@ -34,6 +36,7 @@ public class TermNode extends ProximityNode{
 
             Posting posting = this.postingList.getCurrentPosting();
             this.occurrences.put(posting.getDocId(), posting.getTermFreq());
+            this.totalOccurences += posting.getTermFreq();
             this.postingList.skipTo(posting.getDocId() + 1);
         }
     }

@@ -5,6 +5,7 @@ import index.InvertedIndex;
 import retrieval.DocumentScore;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -58,6 +59,13 @@ public class Utils {
             e1.printStackTrace();
         }
 
+    }
+
+    public static void deleteFile(String filename){
+
+        File file = new File(filename);
+
+        file.delete();
     }
 
 

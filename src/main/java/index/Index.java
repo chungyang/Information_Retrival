@@ -1,6 +1,7 @@
 package index;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -69,5 +70,7 @@ public interface Index {
 	 * @return the external document id associated with that number.
 	 */
 	public String getDocName(int key);
-	 
+
+	public Map<Integer, String> getSceneMap();
+
 }

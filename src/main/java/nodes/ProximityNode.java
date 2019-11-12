@@ -43,8 +43,9 @@ public abstract class ProximityNode extends QueryNode {
     public double score(int docid) {
 
         if(!occurrences.containsKey(docid)){
-            return 0;
+            return model.scoreOccurrence(0, this.totalOccurences, index.getDocLength(docid));
         }
+
         return model.scoreOccurrence(this.occurrences.get(docid), this.totalOccurences, index.getDocLength(docid));
     }
 

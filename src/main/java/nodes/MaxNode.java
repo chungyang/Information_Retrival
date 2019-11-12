@@ -15,9 +15,10 @@ public class MaxNode extends QueryNode{
     @Override
     public double score(int docid) {
 
-        double max = Double.MAX_VALUE;
+        double max = Double.NEGATIVE_INFINITY;
 
         for(QueryNode child : children){
+            double score = child.score(docid);
             max = Math.max(max, child.score(docid));
         }
 

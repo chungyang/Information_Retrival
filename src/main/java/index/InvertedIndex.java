@@ -206,6 +206,11 @@ public class InvertedIndex implements Index {
         return getScene(docId);
     }
 
+    @Override
+    public Map<Integer, String> getSceneMap() {
+        return this.sceneIdMap;
+    }
+
     /**
      * @return a list of the top k documents in descending order with respect to scores.
      * key = sceneId, value = score
