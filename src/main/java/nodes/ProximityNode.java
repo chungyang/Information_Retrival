@@ -9,7 +9,6 @@ import java.util.*;
 public abstract class ProximityNode extends QueryNode {
 
 
-    protected List<QueryNode> children;
     protected Map<Integer, Integer> occurrences = new HashMap<>();
     protected RetrievalModel model;
     protected int totalOccurences;
@@ -49,10 +48,4 @@ public abstract class ProximityNode extends QueryNode {
         return model.scoreOccurrence(this.occurrences.get(docid), this.totalOccurences, index.getDocLength(docid));
     }
 
-    public void resetChildren(){
-
-        for(QueryNode child : children){
-            child.resetNode();
-        }
-    }
 }

@@ -2,6 +2,7 @@ package nodes;
 
 import index.Index;
 import index.Posting;
+import index.PostingList;
 import retrieval.RetrievalModel;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class OrderedWindow extends Window {
         this.model = model;
         this.index = index;
         this.children = children;
+        this.postingList = new PostingList();
         this.resetChildren();
         this.getOccurences(windowSize);
     }
@@ -22,7 +24,7 @@ public class OrderedWindow extends Window {
     @Override
     public void getOccurences(int windowSize) {
 
-        for(int docid = 1; docid < index.getDocCount(); docid++) {
+        for(int docid = 1; docid <= index.getDocCount(); docid++) {
 
             int occurrence = 0;
             int nextCommonDoc = nextCandidateDoc(docid);
@@ -32,7 +34,7 @@ public class OrderedWindow extends Window {
             }
 
             if (nextCommonDoc != 0) {
-
+                List<Integer> positions = new ArrayList<>();
                 List<Posting> postings = new ArrayList<>();
 
                 for(QueryNode child : this.children){
@@ -43,15 +45,13 @@ public class OrderedWindow extends Window {
                 }
 
                 Posting firstPosting = postings.get(0);
-                if(nextCommonDoc == 521){
-                    int hey = 0;
-                }
 
                 for (int i = 0; i < firstPosting.getPositionSize(); i++) {
 
                     if (firstPosting.hasMore()){
 
                         if(occurInWindowSize(postings, windowSize, firstPosting.getCurrentPosition(), 0)){
+                            positions.add(firstPosting.getCurrentPosition());
                             occurrence++;
                         }
 
@@ -63,6 +63,8 @@ public class OrderedWindow extends Window {
                 if(occurrence > 0){
                     occurrences.put(nextCommonDoc, occurrence);
                     totalOccurences += occurrence;
+                    Posting windowPosting = new Posting(nextCommonDoc, positions);
+                    this.postingList.add(windowPosting);
                 }
             }
 

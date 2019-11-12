@@ -2,21 +2,37 @@ package nodes;
 
 import index.Index;
 import index.Posting;
+import index.PostingList;
 import retrieval.RetrievalModel;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class UnOrderedWindow extends Window {
 
+    public UnOrderedWindow(RetrievalModel model, Index index, List<QueryNode> children){
+
+        int maxDocLength = 0;
+
+        for(int i = 1; i <= index.getDocCount(); i++){
+            if(index.getDocLength(i) > maxDocLength){
+                maxDocLength = index.getDocLength(i);
+            }
+        }
+
+        this.model = model;
+        this.index = index;
+        this.children = children;
+        this.resetChildren();
+        this.getOccurences(maxDocLength);
+    }
 
     public UnOrderedWindow(RetrievalModel model, Index index, List<QueryNode> children,
                            int windowSize){
         this.model = model;
         this.index = index;
         this.children = children;
+        this.postingList = new PostingList();
         this.resetChildren();
         this.getOccurences(windowSize);
     }
@@ -24,7 +40,7 @@ public class UnOrderedWindow extends Window {
     @Override
     public void getOccurences(int windowSize) {
 
-        for(int docid = 1; docid < index.getDocCount(); docid++){
+        for(int docid = 1; docid <= index.getDocCount(); docid++){
 
 
             int commonDoc = nextCandidateDoc(docid);
@@ -36,9 +52,13 @@ public class UnOrderedWindow extends Window {
             if(commonDoc != 0) {
 
                 int occurence = 0;
+                List<Integer> positions = new ArrayList<>();
 
                 while(!isDone()){
-                    if(occurInWindowSize(windowSize)) {
+                    int startPosition = minPosition();
+
+                    if(occurInWindowSize(windowSize, startPosition)) {
+                        positions.add(startPosition);
                         occurence++;
                     }
                 }
@@ -46,24 +66,25 @@ public class UnOrderedWindow extends Window {
                 totalOccurences += occurence;
                 if(occurence > 0) {
                     this.occurrences.put(commonDoc, occurence);
+                    Posting windowPosting = new Posting(commonDoc, positions);
+                    this.postingList.add(windowPosting);
+
                 }
             }
         }
-
     }
 
-    private boolean occurInWindowSize(int windowSize){
+    private boolean occurInWindowSize(int windowSize, int startPosition){
 
-        int minPosition = minPosition();
         Set<Integer> childrenContainsTerm = new HashSet<>();
 
         for(int i = 0; i < children.size(); i++){
 
             Posting posting = children.get(i).nextCandidate();
 
-            while(posting.hasMore() && posting.getCurrentPosition() <= minPosition + windowSize - 1){
+            while(posting.hasMore() && posting.getCurrentPosition() <= startPosition + windowSize - 1){
                 childrenContainsTerm.add(i);
-                posting.skipToNextPosition(minPosition + windowSize - 1);
+                posting.skipToNextPosition(startPosition + windowSize - 1);
             }
         }
 
@@ -78,11 +99,7 @@ public class UnOrderedWindow extends Window {
         for(int i = 0; i < children.size(); i++){
 
             int childPostingPosition = children.get(i).nextCandidate().getCurrentPosition();
-
-            if (childPostingPosition < min) {
-                min = childPostingPosition;
-            }
-
+            min = Math.min(min, childPostingPosition);
         }
 
         return min;

@@ -23,6 +23,11 @@ public class Posting {
 		this.docId = docId;
 	}
 
+	public Posting(Integer docId, List<Integer> positions){
+		this.docId = docId;
+		this.positions = positions;
+	}
+
 	/**
 	 * @param pos position to add to the list of positions
 	 */

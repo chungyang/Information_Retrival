@@ -4,13 +4,24 @@ package nodes;
 import index.Posting;
 import index.PostingList;
 
+import java.util.List;
+
 public abstract class QueryNode {
 
+    protected List<QueryNode> children;
     protected PostingList postingList;
     protected int docIndex = 0;
 
 
     public abstract double score(int docid);
+
+    public int nextCandidateId(){
+
+        if(hasMore()){
+            return postingList.get(docIndex).getDocId();
+        }
+        return 0;
+    }
 
     public Posting nextCandidate(){
 
@@ -43,5 +54,10 @@ public abstract class QueryNode {
     public void resetNode(){
         postingList.startIteration();
         docIndex = 0;
+    }
+
+    public void resetChildren(){
+
+        children.forEach(QueryNode::resetNode);
     }
 }
