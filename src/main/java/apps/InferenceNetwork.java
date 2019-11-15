@@ -13,7 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Test {
+public class InferenceNetwork {
 
     private static List<QueryNode> getTermNodes(String query, RetrievalModel model, Index index){
 
@@ -30,19 +30,19 @@ public class Test {
 
         List<DocumentScore> documentScores = new ArrayList<>();
         for(int i = 1; i <= numberOfDoc; i++){
+
             double score = queryNode.score(i);
-            if(score != 0) {
-                DocumentScore documentScore = new DocumentScore(i, score);
-                documentScores.add(documentScore);
-            }
+            DocumentScore documentScore = new DocumentScore(i, score);
+            documentScores.add(documentScore);
+
         }
         Collections.sort(documentScores);
 
         List<DocumentScore> topK = new ArrayList<>();
 
-        for(int i = 0; i < Math.min(k, documentScores.size()); i++){
-            if(documentScores.get(i).getScore() != Double.NEGATIVE_INFINITY){
-                topK.add(documentScores.get(i));
+        for(int j = 0; j < Math.min(k, documentScores.size()); j++){
+            if(documentScores.get(j).getScore() != Double.NEGATIVE_INFINITY){
+                topK.add(documentScores.get(j));
             }
         }
         return topK;
@@ -77,6 +77,7 @@ public class Test {
         int id = 1;
 
         for(String query : queries){
+
             String queryid = "Q" + id;
             List<QueryNode> termNodes = getTermNodes(query, dirichelet, index);
 
@@ -84,7 +85,7 @@ public class Test {
             List<DocumentScore> topK = runQuery(orderedWindow, k, index.getDocCount());
             Utils.writeTREC("od1.trecrun", true, topK, index.getSceneMap(), "chungtingyang-jm-dir", queryid, "1500");
 
-            ProximityNode unOrderedWindow = new UnOrderedWindow(dirichelet, index, termNodes, query.length() * 3);
+            ProximityNode unOrderedWindow = new UnOrderedWindow(dirichelet, index, termNodes, query.split("\\s+").length * 3);
             topK = runQuery(unOrderedWindow, k, index.getDocCount());
             Utils.writeTREC("uw.trecrun", true, topK, index.getSceneMap(), "chungtingyang-jm-dir", queryid, "1500");
 
