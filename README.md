@@ -15,17 +15,16 @@ mvn -f index_pom.xml  compile assembly:single
 ```
 To build InferenceNetwork
 ```
-mvn -f pomquery.xml  compile assembly:single
+mvn -f pom.xml  compile assembly:single
 ```
 
 ### Run
 To run BuildIndex,
 ```
-java -jar target/Info_Retrival-1.0-SNAPSHOT-jar-with-dependencies.jar shakespeare-scenes.json true
-
+java -jar target/Index-1.0-SNAPSHOT-jar-with-dependencies.jar shakespeare-scenes.json true
 ```
 To run InferenceNetwork
 ```
-java -jar target/Info_Retrival-1.0-SNAPSHOT-jar-with-dependencies.jar true queries.txt 5
+java -jar target/Info_Retrival-1.0-SNAPSHOT-jar-with-dependencies.jar true queries.txt 10
 
 ```
