@@ -24,7 +24,7 @@ public class WsumNode extends QueryNode{
 
         for(int i = 0; i < weights.size(); i++){
             QueryNode child = children.get(i);
-            score += weights.get(i) * child.score(docid);
+            score += weights.get(i) * Math.exp(child.score(docid));
             sumWeights += weights.get(i);
         }
 
