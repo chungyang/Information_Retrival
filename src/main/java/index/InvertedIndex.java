@@ -13,6 +13,11 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import cluster.DocumentVector;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import utilities.Compression;
 import utilities.CompressionFactory;
 import utilities.Compressors;
@@ -37,7 +42,7 @@ public class InvertedIndex implements Index {
     private Map<Integer, Integer> docLengths = new HashMap<Integer, Integer>();
 	private Compressors compression;
 	private Map<String, LookUp> lookup = new HashMap<String, LookUp>(); // key = term
-
+    private JSONObject jsonObject;
     private long collectionSize;
     private double aveDocLen;
     private int numOfDoc;
@@ -54,6 +59,22 @@ public class InvertedIndex implements Index {
         loadStringMap("playIds.txt", playIdMap);
         loadDocLengths("docLength.txt");
         loadLookUp("lookup.txt");
+        loadDocVectors("docVectors.json");
+
+    }
+
+    private void loadDocVectors(String fileName){
+
+        JSONParser parser = new JSONParser();
+
+        try {
+            this.jsonObject = (JSONObject) parser.parse(new FileReader(fileName));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
     }
     private void loadStringMap(String fileName, Map<Integer, String> map) {
@@ -139,6 +160,14 @@ public class InvertedIndex implements Index {
             e.printStackTrace();
         }
         return invertedList;
+    }
+
+    public DocumentVector getDocumentVector(int docId){
+
+        Map<String, Double> vector = (HashMap) jsonObject.get(docId);
+        DocumentVector docVector = new DocumentVector(docId, vector);
+
+        return docVector;
     }
 
     public Set<String> getVocabulary() {

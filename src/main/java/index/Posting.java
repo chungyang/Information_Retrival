@@ -71,10 +71,6 @@ public class Posting {
 		return positions.get(positionIndex);
 	}
 
-	public int getPositionSize(){
-		return positions.size();
-	}
-
 	public void resetPositionIndex(){
 		this.positionIndex = 0;
 	}

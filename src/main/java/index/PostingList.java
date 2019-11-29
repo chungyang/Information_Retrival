@@ -141,4 +141,5 @@ public class PostingList {
         postingsIndex = savedIdx;
         return buf.toString();
 	}
+
 }

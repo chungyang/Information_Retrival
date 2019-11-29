@@ -1,5 +1,7 @@
 package index;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -7,8 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import cluster.DocumentVector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -19,6 +23,7 @@ public class IndexBuilder {
     private Map<Integer, String> playIdMap;
     private Map<String, PostingList> invertedLists;
     private Map<Integer, Integer> docLengths;
+    private Map<Integer, Map<String, Double>> documentVectors;
 	private Compressors compression;
 
 	public IndexBuilder() {
@@ -26,7 +31,7 @@ public class IndexBuilder {
 	    playIdMap = new HashMap<Integer, String>();
 	    invertedLists = new HashMap<String, PostingList>();
 	    docLengths = new HashMap<Integer, Integer>();
-
+        documentVectors = new HashMap<>();
 	}
     private void parseFile(String filename) {
         JSONParser parser = new JSONParser();
@@ -49,14 +54,18 @@ public class IndexBuilder {
                 String[] words = text.split("\\s+");
                 //record the document length
                 docLengths.put(docId, words.length);
- 
+
+
                 // iterate over the terms in the scene
                 for (int pos = 0; pos < words.length; pos++) {
                 	String word = words[pos];
                 	invertedLists.putIfAbsent(word, new PostingList());
                 	invertedLists.get(word).add(docId, pos+1);
                  }
+
+
             }
+
         } catch (ParseException e) {
         	// actually do something when bad things happen...
             e.printStackTrace();
@@ -117,6 +126,40 @@ public class IndexBuilder {
 
     }
 
+
+    private void getDocumentVector(){
+
+        for(String term : invertedLists.keySet()){
+
+            PostingList postingList = invertedLists.get(term);
+
+            for(int i = 0; i < postingList.documentCount(); i++){
+
+                Posting posting = postingList.get(i);
+                int docid = posting.getDocId();
+                Map<String, Double> docVector = documentVectors.getOrDefault(docid, new HashMap<>());
+                double tf = posting.getTermFreq();
+                double tdf = Math.log((sceneIdMap.size() + 1) / (postingList.documentCount() + 0.5));
+                docVector.put(term, BigDecimal.valueOf(tf * tdf).setScale(3, RoundingMode.HALF_UP).doubleValue());
+                documentVectors.put(docid, docVector);
+            }
+        }
+
+    }
+
+    private void saveDocumentVecotrs(String fileName){
+
+        getDocumentVector();
+        String jsonText = JSONValue.toJSONString(documentVectors);
+
+        try(FileWriter file = new FileWriter(fileName)){
+            file.write(jsonText);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void buildIndex(String sourcefile, boolean compress) {
     	this.compression = compress ? Compressors.VBYTE : Compressors.EMPTY;
     	String invFile = compress ? "invListCompressed" : "invList";
@@ -126,6 +169,7 @@ public class IndexBuilder {
         saveStringMap("playIds.txt", playIdMap);
         saveDocLengths("docLength.txt");
         saveInvertedLists("lookup.txt", invFile);
+        saveDocumentVecotrs("docVectors.json");
     }
 
 

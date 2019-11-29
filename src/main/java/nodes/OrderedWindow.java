@@ -46,7 +46,7 @@ public class OrderedWindow extends Window {
 
                 Posting firstPosting = postings.get(0);
 
-                for (int i = 0; i < firstPosting.getPositionSize(); i++) {
+                for (int i = 0; i < firstPosting.getTermFreq(); i++) {
 
                     if (firstPosting.hasMore()){
 
