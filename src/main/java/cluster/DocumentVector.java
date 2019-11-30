@@ -26,4 +26,8 @@ public class DocumentVector {
     public Double getOrDefault(String key){
         return vector.getOrDefault(key, 0.0);
     }
+
+    public void put(String key, double value){
+        vector.put(key, value);
+    }
 }

@@ -1,7 +1,7 @@
 package cluster;
 
 
-public class CosineSimilarity {
+public class CosineSimilarity implements SimilarityMethod{
 
     private static CosineSimilarity cosineSimilarity;
 
@@ -20,7 +20,8 @@ public class CosineSimilarity {
     private CosineSimilarity(){}
 
 
-    public static double getCosineSimilarity(DocumentVector v1, DocumentVector v2){
+    @Override
+    public double getSimilarity(DocumentVector v1, DocumentVector v2){
 
         double similarity = 0.0;
         double d1 = 0.0;

@@ -164,7 +164,7 @@ public class InvertedIndex implements Index {
 
     public DocumentVector getDocumentVector(int docId){
 
-        Map<String, Double> vector = (HashMap) jsonObject.get(docId);
+        Map<String, Double> vector = (HashMap) jsonObject.get(String.valueOf(docId));
         DocumentVector docVector = new DocumentVector(docId, vector);
 
         return docVector;

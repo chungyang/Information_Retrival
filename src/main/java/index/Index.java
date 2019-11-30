@@ -1,5 +1,7 @@
 package index;
 
+import cluster.DocumentVector;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -72,5 +74,7 @@ public interface Index {
 	public String getDocName(int key);
 
 	public Map<Integer, String> getSceneMap();
+
+	DocumentVector getDocumentVector(int docId);
 
 }
