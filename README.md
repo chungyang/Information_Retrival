@@ -13,7 +13,7 @@ To build BuildIndex
 ```
 mvn -f index_pom.xml  compile assembly:single
 ```
-To build InferenceNetwork
+To build OnlineCluster
 ```
 mvn -f pom.xml  compile assembly:single
 ```
@@ -23,8 +23,8 @@ To run BuildIndex,
 ```
 java -jar target/Index-1.0-SNAPSHOT-jar-with-dependencies.jar shakespeare-scenes.json true
 ```
-To run InferenceNetwork
+To run OnlineCluster
 ```
-java -jar target/Info_Retrival-1.0-SNAPSHOT-jar-with-dependencies.jar true queries.txt 10
+java -jar target/OnlineCluster-1.0-SNAPSHOT-jar-with-dependencies.jar true MEAN
 
 ```
