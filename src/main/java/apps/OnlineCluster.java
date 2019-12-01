@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.SynchronousQueue;
 
 public class OnlineCluster {
 
@@ -36,9 +35,7 @@ public class OnlineCluster {
                 for (Cluster c : clusters.values()) {
                     int cId = c.getId();
                     double s = c.score(index.getDocumentVector(docid));
-                    if(s > 1){
-                        System.out.println("wrong");
-                    }
+
                     if (s > score) {
                         score = s;
                         best = cId;
