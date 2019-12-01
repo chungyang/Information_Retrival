@@ -42,7 +42,7 @@ public class Cluster {
                 return scoreSingle(vector);
 
             case COMPLETE:
-                return scoreSingle(vector);
+                return scoreComplete(vector);
 
             case AVERAGE:
                 return scoreAverage(vector);
@@ -116,5 +116,9 @@ public class Cluster {
 
     public int getId(){
         return this.id;
+    }
+
+    public List<Integer> getMembers(){
+        return this.members;
     }
 }
